@@ -1,0 +1,40 @@
+<!-- Begin NavBar -->
+<nav class="navbar navbar-expand-lg bg-dark" data-bs-theme="dark">
+    <div class="container-fluid">
+        <!-- Brand-Name: Klick führt zum Login (root Pfad) -->
+        <a class="navbar-brand" href="/">Social Drinks</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
+                aria-controls="mainNavbar" aria-expanded="false" aria-label="Navigation umschalten">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="mainNavbar">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <!-- Bars: Erster Link, verweist auf /bars -->
+                <li class="nav-item">
+                    <a class="nav-link" href="/bars/">Bars</a>
+                </li>
+                <!-- Cocktails: Führt zum Hauptmenü der Cocktails -->
+                <li class="nav-item">
+                    <a class="nav-link" href="/drinks/">Cocktails</a>
+                </li>
+                <!-- Profil: Hier kannst du den Benutzernamen dynamisch ersetzen -->
+                <li class="nav-item">
+                    <a class="nav-link" href="/social/#/profile">Profil</a>
+                </li>
+                <!-- Timeline -->
+                <li class="nav-item">
+                    <a class="nav-link" href="/social/#/timeline">Timeline</a>
+                </li>
+                <!-- Chat -->
+                <li class="nav-item">
+                    <a class="nav-link" href="/social/#/chat">Chat</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<!-- End NavBar -->
+
+<div class="container">
+    <router-outlet></router-outlet>
+</div>
