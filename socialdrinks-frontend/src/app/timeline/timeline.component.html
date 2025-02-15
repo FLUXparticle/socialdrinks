@@ -1,0 +1,64 @@
+<h1>Timeline</h1>
+
+<!-- Anzeige der Timeline-Posts -->
+<ul class="posts">
+    <li *ngFor="let post of timeline" class="post">
+        <div class="post-header">
+            <span class="post-username">{{ post.creator.username }}</span>
+            <span class="post-date">{{ post.createdAt | date:'short' }}</span>
+        </div>
+        <div class="post-content">
+            Cocktail: {{ post.cocktailName }} (ID: {{ post.cocktailId }})<br>
+            Bewertung: {{ post.rating }}
+        </div>
+    </li>
+</ul>
+
+<hr>
+
+<!-- Anzeige von Fehlern beim Erstellen eines Posts -->
+<div *ngIf="errorPost" style="color: red;">
+    {{ errorPost }}
+</div>
+
+<!-- Formular zum Erstellen eines neuen Bewertungs-Posts -->
+<div>
+    <h2>Neue Bewertung</h2>
+    <form (ngSubmit)="createPost()">
+        <!-- Dropdown-Liste für Cocktails -->
+        <select [(ngModel)]="selectedCocktail" name="selectedCocktail" required>
+            <option *ngFor="let cocktail of cocktails" [ngValue]="cocktail">
+                {{ cocktail.name }}
+            </option>
+        </select>
+        <!-- Eingabefeld für die Bewertung -->
+        <input type="number" [(ngModel)]="rating" name="rating" min="1" max="5" placeholder="Bewertung (1-5)" required>
+        <button type="submit">Bewerten</button>
+    </form>
+</div>
+
+<hr>
+
+<!-- Suchfunktion für Timeline-Posts (optional) -->
+<div>
+    <h2>Suche</h2>
+    <form (ngSubmit)="searchPosts()">
+        <input type="text" [(ngModel)]="searchQuery" name="searchQuery" placeholder="Suchbegriff" required>
+        <button type="submit">Suchen</button>
+    </form>
+    <div *ngIf="errorSearch" style="color: red;">
+        {{ errorSearch }}
+    </div>
+    <ul class="posts" *ngIf="searchResults && searchResults.length">
+        <li *ngFor="let post of searchResults" class="post">
+            <div class="post-header">
+                <span class="post-username">{{ post.creator.username }}</span>
+                <span class="post-date">{{ post.createdAt | date:'short' }}</span>
+            </div>
+            <div class="post-content">
+                Cocktail: {{ post.cocktailName }} (ID: {{ post.cocktailId }})<br>
+                Bewertung: {{ post.rating }}
+            </div>
+        </li>
+    </ul>
+</div>

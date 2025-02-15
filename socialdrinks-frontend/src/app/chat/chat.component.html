@@ -1,0 +1,15 @@
+<h1>Chat</h1>
+<div class="messages">
+    <div *ngFor="let chatMessage of messages" class="message">
+        <span class="username">{{ chatMessage.username || 'System' }}</span>
+        <span class="content">{{ chatMessage.message }}</span>
+    </div>
+</div>
+
+<hr>
+
+<div>
+    <h2>Neue Nachricht</h2>
+    <input type="text" [(ngModel)]="newMessage" (keydown.enter)="sendMessage()" placeholder="Text"/>
+    <button (click)="sendMessage()">Senden</button>
+</div>
