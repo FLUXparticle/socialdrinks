@@ -51,8 +51,8 @@ public class CocktailService {
     }
 
     public Collection<Cocktail> search(String query) {
-        Collection<Cocktail> cocktailsWithName = emptyList(); // TODO Finde alle Cocktails deren Name 'query' enthält
-        Collection<Ingredient> ingredientsWithName = emptyList(); // TODO Finde alle Ingredients deren Name 'query' enthält
+        Collection<Cocktail> cocktailsWithName = cocktailRepository.findByNameContains(query);
+        Collection<Ingredient> ingredientsWithName = ingredientRepository.findByNameContains(query);
 
         Set<Long> ingredientIDs = new HashSet<>();
         for (Ingredient ingredient : ingredientsWithName) {
@@ -88,7 +88,7 @@ public class CocktailService {
     }
 
     private Collection<Cocktail> getAllCocktailsWithIngredients(Set<Long> ingredientIDs) {
-        return emptyList(); // TODO Finde alle eindeutigen Cocktails, die mindestens eine Zutat aus 'ingredientIDs' enthalten
+        return cocktailRepository.findDistinctByInstructionsIngredientIdIn(ingredientIDs);
     }
 
 }

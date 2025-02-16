@@ -13,4 +13,8 @@ public interface CocktailRepository extends CrudRepository<Cocktail, Long> {
     @NonNull
     Collection<Cocktail> findAll();
 
+    Collection<Cocktail> findByNameContains(String query);
+
+    Collection<Cocktail> findDistinctByInstructionsIngredientIdIn(Collection<Long> ingredientIDs);
+
 }
