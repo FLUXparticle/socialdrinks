@@ -1,0 +1,18 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" lang="de">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Zutaten</title>
+</head>
+
+<body>
+<h3><a th:href="@{/}">Cocktails App</a> &gt; Zutaten</h3>
+<ul>
+    <li th:each="ingredient : ${ingredients}">
+        <a th:href="@{/ingredients/{id}(id=${ingredient.id})}" th:text="${ingredient.name}"></a>
+    </li>
+</ul>
+</body>
+
+</html>
