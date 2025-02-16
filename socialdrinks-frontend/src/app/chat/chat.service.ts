@@ -23,7 +23,7 @@ export class ChatService {
         const port = window.location.port ? ':' + window.location.port : '';
 
         this.stompClient = new Client({
-            brokerURL: `${protocol}//${host}${port}/api/chat/ws`, // Endpoint aus Spring WebSocket Config
+            brokerURL: `${protocol}//${host}${port}/chat/ws`, // Endpoint aus Spring WebSocket Config
             reconnectDelay: 5000, // Automatische Wiederverbindung nach 5 Sekunden
             debug: (str: string) => {
                 console.log(`[STOMP Debug] ${str}`);

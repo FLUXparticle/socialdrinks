@@ -43,7 +43,7 @@ public class GatewayConfig {
                         .uri("http://localhost:8085"))
 
                 .route("chat-service", r -> r
-                        .path("/api/chat/**")
+                        .path("/chat/**")
                         .uri("ws://localhost:8086"))
                 
                 .build();
