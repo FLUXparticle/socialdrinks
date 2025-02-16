@@ -1,0 +1,7 @@
+<h3>Cocktails mit {{data.name}}</h3>
+
+<ul>
+    <li ng-repeat="cocktail in data.cocktails">
+        <a ng-href="#/cocktails/{{cocktail.id}}" ng-bind="cocktail.name"></a>
+    </li>
+</ul>

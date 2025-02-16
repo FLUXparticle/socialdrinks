@@ -1,0 +1,11 @@
+<h3>Zutaten für {{cocktail.name}}</h3>
+
+<ul>
+    <li ng-repeat="instruction in cocktail.instructions">
+        {{instruction.amountCL}} <a ng-href="#/ingredients/{{instruction.ingredient.id}}">{{instruction.ingredient.name}}</a>
+    </li>
+</ul>
+
+<div ng-if="cocktail.averageRating">
+    <p>Durchschnittliche Bewertung: {{ cocktail.averageRating }}</p>
+</div>
