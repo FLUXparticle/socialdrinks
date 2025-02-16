@@ -8,11 +8,16 @@
 
 <h1>Hallo, <span th:text="${name} ?: 'World'">World</span>!</h1>
 
-<form th:action="@{/hello}" method="post">
+<form th:action="@{/hello}" method="post" th:object="${form}">
     <label for="name">Gib deinen Namen ein:</label>
-    <input type="text" id="name" name="name">
+    <input type="text" id="name"  th:field="*{name}">
     <button type="submit">Senden</button>
 </form>
+
+<!-- Fehlermeldung anzeigen, falls vorhanden -->
+<ul th:if="${errors}" style="color: red">
+    <li th:each="error : ${errors}" th:text="${error}"></li>
+</ul>
 
 </body>
 </html>
