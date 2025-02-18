@@ -39,48 +39,60 @@ class CocktailServiceApplicationRestControllerTest {
 
     @Test
     void testGetCocktailById() {
-        // TODO: Schreibe einen Test, der einen Cocktail anhand der ID abruft.
-        // Verwende die Methode restTemplate.getForEntity().
-        // Stelle sicher, dass die Antwort OK ist
-        // und die Map die Keys 'name' und 'instructions' enthält.
+        long cocktailId = 1;  // Dies sollte ein gültiger ID-Wert sein
+        ResponseEntity<Map> response = restTemplate.getForEntity(baseUrl + "/cocktails/" + cocktailId, Map.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).containsKeys("name", "instructions");
     }
 
     @Test
     void testSearchCocktails() {
-        // TODO: Schreibe einen Test für GET /cocktails/search.
-        // Verwende einen Suchbegriff wie 'Milch'.
-        // Stelle sicher, dass die Antwort OK ist
-        // und mindestens ein Cocktail zurückgegeben wird.
-        // Bonus: Einer der Cocktails ist der "Pink Power"
+        String query = "Milch";
+        ResponseEntity<Cocktail[]> response = restTemplate.getForEntity(baseUrl + "/cocktails/search?query=" + query, Cocktail[].class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isNotEmpty();
     }
 
     @Test
     void testPostPossibleRecipes() {
-        // TODO: Schreibe einen Test für POST /possible.
-        // Sende eine JSON-Payload mit den Ingredient-IDs 7 und 30.
-        // Stelle sicher, dass genau ein möglicher Cocktail zurückgelifert wird.
-        // Bonus: Dieser Cocktails ist der "Pink Power"
-    }
+        Map<String, List<Long>> requestPayload = new HashMap<>();
+        requestPayload.put("ingredientIDs", Arrays.asList(7L, 30L));
 
+        ResponseEntity<Cocktail[]> response = restTemplate.postForEntity(
+                baseUrl + "/possible",
+                requestPayload,
+                Cocktail[].class
+        );
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isNotEmpty();
+    }
 
     @Test
     void testGetAllIngredients() {
-        // TODO: Schreibe einen Test für GET /ingredients.
-        // Stelle sicher, dass die Antwort OK ist
-        // und mindestens eine Zutat zurückgegeben wird.
+        ResponseEntity<Ingredient[]> response = restTemplate.getForEntity(baseUrl + "/ingredients", Ingredient[].class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isNotEmpty();
     }
 
     @Test
     void testGetIngredientById() {
-        // TODO: Schreibe einen Test für GET /ingredients/{id}.
-        // Stelle sicher, dass die Antwort OK ist
-        // und eine gültige Zutat zurückkommt.
+        long ingredientId = 1;
+        ResponseEntity<Ingredient> response = restTemplate.getForEntity(baseUrl + "/ingredients/" + ingredientId, Ingredient.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isNotNull();
     }
 
     @Test
     void testGetCocktailsByIngredient() {
-        // TODO: Schreibe einen Test für GET /ingredients/{id}/cocktails.
-        // Stelle sicher, dass die Antwort OK ist
-        // und eine Liste von Cocktails zurückkommt.
+        long ingredientId = 1;
+        ResponseEntity<Map> response = restTemplate.getForEntity(baseUrl + "/ingredients/" + ingredientId + "/cocktails", Map.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).containsKey("cocktails");
     }
 }
