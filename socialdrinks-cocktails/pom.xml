@@ -48,6 +48,13 @@
             <artifactId>hibernate-community-dialects</artifactId>
         </dependency>
 
+        <!-- Datenbank für Test -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
 </project>
