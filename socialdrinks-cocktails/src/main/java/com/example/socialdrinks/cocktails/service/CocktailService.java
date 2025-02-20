@@ -3,6 +3,7 @@ package com.example.socialdrinks.cocktails.service;
 import com.example.socialdrinks.cocktails.repository.*;
 import com.example.socialdrinks.model.entity.*;
 import org.slf4j.*;
+import org.springframework.amqp.rabbit.core.*;
 import org.springframework.stereotype.*;
 
 import java.util.*;
@@ -18,9 +19,12 @@ public class CocktailService {
 
     private final IngredientRepository ingredientRepository;
 
-    public CocktailService(CocktailRepository cocktailRepository, IngredientRepository ingredientRepository) {
+    private final RabbitTemplate rabbitTemplate;
+
+    public CocktailService(CocktailRepository cocktailRepository, IngredientRepository ingredientRepository, RabbitTemplate rabbitTemplate) {
         this.cocktailRepository = cocktailRepository;
         this.ingredientRepository = ingredientRepository;
+        this.rabbitTemplate = rabbitTemplate;
     }
 
     public Collection<Cocktail> getAllCocktails() {
@@ -89,6 +93,24 @@ public class CocktailService {
 
     private Collection<Cocktail> getAllCocktailsWithIngredients(Set<Long> ingredientIDs) {
         return cocktailRepository.findDistinctByInstructionsIngredientIdIn(ingredientIDs);
+    }
+
+    /**
+     * Fragt über RabbitMQ beim FeedService den Durchschnitt der Bewertungen für den angegebenen Cocktail ab.
+     * Falls keine Antwort oder ein Fehler auftritt, wird null zurückgegeben.
+     */
+    public Double getAverageRating(Long cocktailId) {
+        try {
+            // Sende die Anfrage an den FeedService.
+            // Hier wird angenommen, dass der Exchange "rating.exchange" und das Routing Key "rating.request" verwendet werden.
+            Object response = rabbitTemplate.convertSendAndReceive("rating.exchange", "rating.request", cocktailId);
+            if (response instanceof Double value) {
+                return value;
+            }
+        } catch(Exception e) {
+            LOGGER.error("Fehler beim Abfragen der Durchschnittsbewertung: {}", e.getMessage());
+        }
+        return null;
     }
 
 }

@@ -28,10 +28,14 @@ public class CocktailRestController {
     @GetMapping("/cocktails/{id}")
     public Map<String, Object> cocktail(@PathVariable Long id) {
         Cocktail cocktail = cocktailService.getCocktailWithID(id);
+        String averageRating = Optional.ofNullable(cocktailService.getAverageRating(id))
+                .map("%.1f"::formatted)
+                .orElse("");
 
         return Map.of(
                 "name", cocktail.getName(),
-                "instructions", cocktail.getInstructions()
+                "instructions", cocktail.getInstructions(),
+                "averageRating", averageRating
         );
     }
 
