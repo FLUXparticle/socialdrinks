@@ -26,8 +26,10 @@ public class CocktailRestController {
     }
 
     @GetMapping("/cocktails/{id}")
-    public Map<String, Object> cocktail(@PathVariable Long id) {
+    public Map<String, Object> cocktail(@PathVariable Long id) throws Exception {
         Cocktail cocktail = cocktailService.getCocktailWithID(id);
+
+        Thread.sleep(1000);
 
         return Map.of(
                 "name", cocktail.getName(),
