@@ -1,11 +1,13 @@
 package com.example.socialdrinks.chat.service;
 
 import org.springframework.messaging.simp.*;
+import org.springframework.scheduling.annotation.*;
 import org.springframework.stereotype.*;
 
 import java.io.*;
 
 @Service
+@EnableScheduling
 public class ChatService {
 
     private final SimpMessagingTemplate messagingTemplate;
@@ -17,6 +19,11 @@ public class ChatService {
     public void enterRoom(String username) {
         String textMessage = username + " hat den Raum betreten.";
         sendLine(null, textMessage);
+    }
+
+    @Scheduled(fixedRate = 5000) // Alle 5 Sekunden
+    public void executeTask() {
+        sendLine(null, "Bist Du noch da?");
     }
 
     public void sendChatMessage(String username, String textMessage) {
