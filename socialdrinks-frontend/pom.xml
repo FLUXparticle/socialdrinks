@@ -72,4 +72,94 @@
 
         </plugins>
     </build>
+
+    <profiles>
+
+        <profile>
+            <id>spring-doc</id>
+
+            <build>
+                <plugins>
+                    <!-- 1) Artefakt-Datei ins target/ kopieren -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <version>3.6.1</version>
+                        <executions>
+                            <execution>
+                                <id>copy-openapi</id>
+                                <phase>generate-sources</phase>
+                                <goals><goal>copy</goal></goals>
+                                <configuration>
+                                    <artifactItems>
+                                        <artifactItem>
+                                            <groupId>com.example</groupId>
+                                            <artifactId>socialdrinks-cocktails</artifactId>
+                                            <classifier>openapi</classifier>
+                                            <type>json</type>
+                                            <destFileName>openapi.json</destFileName>
+                                            <outputDirectory>${project.build.directory}</outputDirectory>
+                                        </artifactItem>
+                                    </artifactItems>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <!-- 2) TypeScript generieren: nur Modelle ODER kompletter Client -->
+                    <plugin>
+                        <groupId>org.openapitools</groupId>
+                        <artifactId>openapi-generator-maven-plugin</artifactId>
+                        <version>7.16.0</version>
+                        <executions>
+                            <execution>
+                                <id>gen-ts</id>
+                                <phase>generate-sources</phase>
+                                <goals><goal>generate</goal></goals>
+                                <configuration>
+                                    <inputSpec>${project.build.directory}/openapi.json</inputSpec>
+
+                                    <!-- Variante A: kompletter Client -->
+                                    <generatorName>typescript-axios</generatorName>
+
+                                    <!-- Variante B: nur Modelle
+                            <generatorName>typescript-fetch</generatorName>
+                            <configOptions>
+                              <modelOnly>true</modelOnly>
+                            </configOptions>
+                            -->
+
+                                    <output>${project.build.directory}/generated/ts</output>
+                                    <configOptions>
+                                        <supportsES6>true</supportsES6>
+                                        <withSeparateModelsAndApi>true</withSeparateModelsAndApi>
+                                        <modelPropertyNaming>camelCase</modelPropertyNaming>
+                                        <enumPropertyNaming>original</enumPropertyNaming>
+                                        <useSingleRequestParameter>true</useSingleRequestParameter>
+                                        <apiPackage>api</apiPackage>
+                                        <modelPackage>model</modelPackage>
+                                    </configOptions>
+                                    <strictSpec>true</strictSpec>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+
+            <dependencies>
+                <!-- zieht cocktails:openapi.json wie ein normales Artefakt -->
+                <dependency>
+                    <groupId>com.example</groupId>
+                    <artifactId>socialdrinks-cocktails</artifactId>
+                    <version>1.0-SNAPSHOT</version>
+                    <classifier>openapi</classifier>
+                    <type>json</type>
+                </dependency>
+            </dependencies>
+
+        </profile>
+
+    </profiles>
+
 </project>
