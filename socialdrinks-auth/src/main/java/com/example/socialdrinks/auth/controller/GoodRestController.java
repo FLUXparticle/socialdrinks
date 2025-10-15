@@ -4,13 +4,10 @@ import com.example.socialdrinks.auth.service.GoodService;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.HtmlUtils;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 @RestController
@@ -50,7 +47,9 @@ public class GoodRestController {
     @Secured("SCOPE_ADMIN")
     @GetMapping("/all")
     public Map<String, String> getAllTexts() {
-        return goodService.getAllTexts();
+        Map<String, String> escaped = new LinkedHashMap<>();
+        goodService.getAllTexts().forEach((user, text) -> escaped.put(user, HtmlUtils.htmlEscape(text)));
+        return escaped;
     }
 
     private Map<String, String> save(JwtAuthenticationToken authentication, String text) {
