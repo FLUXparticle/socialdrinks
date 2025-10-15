@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Good App - User</title>
+    <link rel="stylesheet" href="/css/good.css">
+</head>
+<body>
+<h1>Good App – User View</h1>
+
+<section id="login-section">
+    <h2>Login</h2>
+    <form id="login-form">
+        <label>
+            Username:
+            <input type="text" id="username" value="employee" required>
+        </label>
+        <br>
+        <label>
+            Password:
+            <input type="password" id="password" value="Secret123" required>
+        </label>
+        <br>
+        <button type="submit">Login</button>
+    </form>
+    <p id="login-status"></p>
+</section>
+
+<section id="text-section" class="hidden">
+    <h2>Personal Note</h2>
+    <textarea id="user-text" placeholder="Write your note here..."></textarea>
+    <br>
+    <button id="save-text">Save Note</button>
+    <p id="save-status"></p>
+</section>
+
+<script src="/js/good-user.js"></script>
+</body>
+</html>

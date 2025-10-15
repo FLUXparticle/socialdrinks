@@ -27,11 +27,10 @@ public class AuthController {
 
         String token = tokenService.generateToken(username, password);
 
-        // Erstelle ein Cookie mit dem JWT. Wir setzen httpOnly auf false, damit der Gateway-Filter den Cookie auslesen kann.
         ResponseCookie jwtCookie = ResponseCookie.from("jwt", token)
-                .httpOnly(true) // Schützt for XSS, Cookie ist nicht durch JS auslesbar
-                .secure(false)  // ACHTUNG: In Produktion sollte hier true stehen (nur HTTPS)
-                .sameSite("Strict") // Schutz vor CSRF, da der Browser den Cookie nur bei Anfragen von derselben Seite mitschickt.
+//                .httpOnly(false)
+//                .secure(false)  // ACHTUNG: In Produktion sollte hier true stehen (nur HTTPS)
+//                .sameSite("Lax")
                 .path("/")
                 .maxAge(Duration.ofHours(1))
                 .build();
