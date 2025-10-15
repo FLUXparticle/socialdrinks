@@ -26,4 +26,13 @@ public class CocktailDetails {
         this.instructions = instructions;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("CocktailDetails{");
+        sb.append("name='").append(name).append('\'');
+        sb.append(", instructions=").append(instructions);
+        sb.append('}');
+        return sb.toString();
+    }
+
 }

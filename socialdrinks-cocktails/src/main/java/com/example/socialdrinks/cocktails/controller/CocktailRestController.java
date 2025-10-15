@@ -22,14 +22,16 @@ public class CocktailRestController {
     }
 
     @GetMapping(path = "/cocktails")
-    public Collection<Cocktail> getAllCocktails() {
+    public Collection<Cocktail> getAllCocktails() throws InterruptedException {
+        Thread.sleep(1000);
         return cocktailService.getAllCocktails().stream()
                 .sorted(Comparator.comparing(Cocktail::getName))
                 .toList();
     }
 
     @GetMapping("/cocktails/{id}")
-    public Map<String, Object> cocktail(@PathVariable Long id) {
+    public Map<String, Object> cocktail(@PathVariable Long id) throws InterruptedException {
+        Thread.sleep(1000);
         Cocktail cocktail = cocktailService.getCocktailWithID(id);
         String averageRating = Optional.ofNullable(cocktailService.getAverageRating(id))
                 .map("%.1f"::formatted)
@@ -43,7 +45,8 @@ public class CocktailRestController {
     }
 
     @GetMapping("/cocktails/search")
-    public Collection<Cocktail> searchCocktails(@RequestParam String query) {
+    public Collection<Cocktail> searchCocktails(@RequestParam String query) throws InterruptedException {
+        Thread.sleep(1000);
         return cocktailService.search(query);
     }
 
