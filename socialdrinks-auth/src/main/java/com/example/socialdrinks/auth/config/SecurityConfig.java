@@ -43,6 +43,16 @@ public class SecurityConfig {
                         .bearerTokenResolver(cookieAwareBearerTokenResolver())
                         .jwt(Customizer.withDefaults())
                 )
+                .headers(headers -> headers
+                        .contentSecurityPolicy(csp -> csp.policyDirectives(
+                                "default-src 'self'; " +
+                                        "script-src 'self'; " +
+                                        "style-src 'self'; " + // 'unsafe-inline' würde die Sperry für CSS umgehen
+                                        "img-src 'self'; " +
+                                        "object-src 'none'; " +
+                                        "base-uri 'self'; " +
+                                        "frame-ancestors 'self'"))
+                )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .build();
     }
