@@ -46,4 +46,19 @@ public class FridgeController {
         return fridgeService.getPossibleCocktails();
     }
 
+    // Endpoint zum Mischen eines Cocktails
+    @GetMapping(value = "/mix/{cocktailId}",
+            produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public Flux<String> mixCocktail(
+            @PathVariable Long cocktailId) {
+        return fridgeService.mix(cocktailId);
+    }
+
+    @GetMapping(value = "/milk/summary",
+            produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public Flux<String> milkSummary() {
+        return fridgeService.milkSummary();
+    }
+
+
 }

@@ -9,6 +9,7 @@ import org.springframework.security.core.context.*;
 import org.springframework.stereotype.*;
 import reactor.core.publisher.*;
 
+import java.time.*;
 import java.util.*;
 
 @Service
@@ -56,6 +57,30 @@ public class FridgeService {
                 );
     }
 
+    public Flux<String> mixBlock(Long cocktailId) {
+        return Flux.<String>create(sink -> {
+            Mono<CocktailDetails> detailsMono = cocktailService.getCocktailDetails(cocktailId);
+
+            CocktailDetails details = detailsMono.block();
+
+            for (Instruction instruction : details.getInstructions()) {
+                sink.next(instruction.toString());
+            }
+
+            sink.next("Schütteln...");
+            sink.next("Fertig!");
+        }).delayElements(Duration.ofSeconds(1));
+    }
+
+    public Flux<String> mix(Long cocktailId) {
+        Mono<CocktailDetails> detailsMono = cocktailService.getCocktailDetails(cocktailId);
+
+        return detailsMono.flatMapIterable(CocktailDetails::getInstructions)
+                .map(Instruction::toString)
+                .concatWithValues("Schütteln...", "Fertig!")
+                .delayElements(Duration.ofSeconds(1));
+    }
+
     private static Mono<Set<Long>> getFridge() {
         return ReactiveSecurityContextHolder.getContext().map(context -> {
             Authentication authentication = context.getAuthentication();
@@ -67,5 +92,18 @@ public class FridgeService {
     }
 
     static final Map<String, Set<Long>> allFridges = new HashMap<>();
+
+    public Flux<String> milkSummary() {
+        return cocktailService.getAllCocktails()
+                .filter(cocktail -> cocktail.getName().contains("Milk"))
+                .flatMap(cocktail -> cocktailService.getCocktailDetails(cocktail.getId()))
+                .flatMapIterable(cocktailDetails -> cocktailDetails.getInstructions())
+                .filter(instruction -> instruction.getIngredient().getName().equals("Milch"))
+                .map(Instruction::getAmountCL)
+                .reduce(Integer::sum)
+                .flux()
+                .map(String::valueOf)
+                .delayElements(Duration.ofSeconds(1));
+    }
 
 }
