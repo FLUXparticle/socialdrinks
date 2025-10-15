@@ -11,3 +11,10 @@
         </div>
     </li>
 </ul>
+
+<div class="milk-summary">
+    <button type="button" ng-click="calculateMilkSummary()">Milchbedarf berechnen</button>
+    <div ng-if="milkMessages.length" class="mix-ausgabe">
+        <div ng-repeat="line in milkMessages track by $index">{{ line }}</div>
+    </div>
+</div>

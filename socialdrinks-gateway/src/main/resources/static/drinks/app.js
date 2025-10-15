@@ -161,6 +161,7 @@ app.controller('PossibleController', function($scope, $http) {
         });
 
     $scope.mixMessages = {};
+    $scope.milkMessages = [];
     var currentEventSource = null;
 
     function closeEventSource() {
@@ -192,4 +193,22 @@ app.controller('PossibleController', function($scope, $http) {
     $scope.$on('$destroy', function() {
         closeEventSource();
     });
+
+    $scope.calculateMilkSummary = function() {
+        $scope.milkMessages = [];
+        closeEventSource();
+
+        currentEventSource = new EventSource('/api/fridge/milk/summary');
+        currentEventSource.onmessage = function(event) {
+            $scope.$applyAsync(function() {
+                $scope.milkMessages.push(event.data);
+            });
+        };
+        currentEventSource.onerror = function(event) {
+            if (event && event.currentTarget && event.currentTarget.readyState !== EventSource.CLOSED) {
+                console.error('Fehler beim Berechnen des Milchbedarfs:', event);
+            }
+            closeEventSource();
+        };
+    };
 });
