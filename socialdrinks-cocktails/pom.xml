@@ -53,6 +53,13 @@
             <artifactId>hibernate-community-dialects</artifactId>
         </dependency>
 
+        <!-- SpringDoc -->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>2.8.13</version>
+        </dependency>
+
         <!-- Datenbank für Test -->
         <dependency>
             <groupId>com.h2database</groupId>
@@ -122,6 +129,57 @@
                                     <goal>integration-test</goal>
                                     <goal>verify</goal>
                                 </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>spring-doc</id>
+            <build>
+                <plugins>
+                    <!-- 1) OpenAPI erzeugen -->
+                    <plugin>
+                        <groupId>org.springdoc</groupId>
+                        <artifactId>springdoc-openapi-maven-plugin</artifactId>
+                        <version>1.5</version>
+                        <executions>
+                            <execution>
+                                <id>generate-openapi</id>
+                                <phase>integration-test</phase>
+                                <goals><goal>generate</goal></goals>
+                                <configuration>
+                                    <apiDocsUrl>http://localhost:8082/v3/api-docs</apiDocsUrl>
+                                    <outputDir>${project.build.directory}</outputDir>
+                                    <outputFileName>openapi.json</outputFileName>
+                                    <attachArtifact>true</attachArtifact> <!-- beim install/deploy mit ausliefern -->
+                                    <failOnError>true</failOnError>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <!-- 2) erzeugte openapi.json als separates Artefakt anhängen -->
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>build-helper-maven-plugin</artifactId>
+                        <version>3.5.0</version>
+                        <executions>
+                            <execution>
+                                <id>attach-openapi</id>
+                                <phase>package</phase>
+                                <goals><goal>attach-artifact</goal></goals>
+                                <configuration>
+                                    <artifacts>
+                                        <artifact>
+                                            <file>${project.build.directory}/openapi.json</file>
+                                            <type>json</type>
+                                            <classifier>openapi</classifier>
+                                        </artifact>
+                                    </artifacts>
+                                </configuration>
                             </execution>
                         </executions>
                     </plugin>

@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Cocktail",
+  "type": "object",
+  "required": ["name", "ingredients"],
+  "properties": {
+    "name": { "type": "string" },
+    "rating": { "type": "number", "minimum": 0, "maximum": 5 },
+    "ingredients": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1
+    }
+  }
+}
