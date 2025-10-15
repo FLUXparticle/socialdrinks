@@ -2,6 +2,9 @@ package com.example.socialdrinks.cocktails.controller;
 
 import com.example.socialdrinks.cocktails.service.*;
 import com.example.socialdrinks.model.entity.*;
+import jakarta.validation.*;
+import jakarta.validation.constraints.*;
+import org.springframework.validation.*;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -40,10 +43,31 @@ public class CocktailRestController {
         return cocktailService.search(query);
     }
 
+    public static class PossibleRequest {
+        @NotNull
+        List<Long> ingredientIDs;
+
+        public List<Long> getIngredientIDs() {
+            return ingredientIDs;
+        }
+
+        public void setIngredientIDs(List<Long> ingredientIDs) {
+            this.ingredientIDs = ingredientIDs;
+        }
+    }
+
     @PostMapping("/possible")
-    public Collection<Cocktail> getPossibleRecipes(@RequestBody Map<String, List<Long>> payload) {
-        List<Long> ingredientIDs = payload.getOrDefault("ingredientIDs", emptyList());
-        return cocktailService.getPossibleCocktails(new HashSet<>(ingredientIDs));
+    public Map<String, Object> getPossibleRecipes(@RequestBody @Valid PossibleRequest payload, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            List<String> errors = bindingResult.getAllErrors().stream()
+                    .map(ObjectError::getDefaultMessage)
+                    .toList();
+            return Map.of("errors", errors);
+        }
+
+        List<Long> ingredientIDs = payload.getIngredientIDs();
+        List<Cocktail> possibleCocktails = cocktailService.getPossibleCocktails(new HashSet<>(ingredientIDs));
+        return Map.of("cocktails", possibleCocktails);
     }
 
     @GetMapping("/ingredients")
