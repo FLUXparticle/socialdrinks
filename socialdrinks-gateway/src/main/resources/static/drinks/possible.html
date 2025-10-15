@@ -2,6 +2,12 @@
 
 <ul>
     <li ng-repeat="cocktail in cocktails">
-        <a ng-href="#/cocktails/{{ cocktail.id }}">{{ cocktail.name }}</a>
+        <div>
+            <a ng-href="#/cocktails/{{ cocktail.id }}">{{ cocktail.name }}</a>
+            <button type="button" ng-click="mixCocktail(cocktail)">Mixen</button>
+        </div>
+        <div ng-if="mixMessages[cocktail.id] && mixMessages[cocktail.id].length" class="mix-ausgabe">
+            <div ng-repeat="line in mixMessages[cocktail.id] track by $index">{{ line }}</div>
+        </div>
     </li>
 </ul>

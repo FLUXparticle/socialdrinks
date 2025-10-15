@@ -159,4 +159,37 @@ app.controller('PossibleController', function($scope, $http) {
         .catch(function(error) {
             console.error('Fehler beim Laden der möglichen Cocktails:', error);
         });
+
+    $scope.mixMessages = {};
+    var currentEventSource = null;
+
+    function closeEventSource() {
+        if (currentEventSource) {
+            currentEventSource.close();
+            currentEventSource = null;
+        }
+    }
+
+    $scope.mixCocktail = function(cocktail) {
+        var targetCocktailId = cocktail.id;
+        $scope.mixMessages[targetCocktailId] = [];
+        closeEventSource();
+
+        currentEventSource = new EventSource('/api/fridge/mix/' + targetCocktailId);
+        currentEventSource.onmessage = function(event) {
+            $scope.$applyAsync(function() {
+                $scope.mixMessages[targetCocktailId].push(event.data);
+            });
+        };
+        currentEventSource.onerror = function(event) {
+            if (event && event.currentTarget && event.currentTarget.readyState !== EventSource.CLOSED) {
+                console.error('Fehler beim Mischen des Cocktails:', event);
+            }
+            closeEventSource();
+        };
+    };
+
+    $scope.$on('$destroy', function() {
+        closeEventSource();
+    });
 });
