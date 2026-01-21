@@ -46,44 +46,4 @@ public class FridgeController {
         return fridgeService.getPossibleCocktails();
     }
 
-    // Endpoint zum Mischen eines Cocktails
-    @GetMapping(value = "/mix/{cocktailId}",
-            produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public SseEmitter mixCocktail(@PathVariable Long cocktailId) {
-        SseEmitter emitter = new SseEmitter();
-        List<String> steps = fridgeService.mix(cocktailId);
-        new Thread(() -> {
-            try {
-                for (String step : steps) {
-                    emitter.send(step);
-                    Thread.sleep(1000);
-                }
-                emitter.complete();
-            } catch (Exception ex) {
-                emitter.completeWithError(ex);
-            }
-        }).start();
-        return emitter;
-    }
-
-    @GetMapping(value = "/milk/summary",
-            produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public SseEmitter milkSummary() {
-        SseEmitter emitter = new SseEmitter();
-        List<String> steps = fridgeService.milkSummary();
-        new Thread(() -> {
-            try {
-                for (String step : steps) {
-                    emitter.send(step);
-                    Thread.sleep(1000);
-                }
-                emitter.complete();
-            } catch (Exception ex) {
-                emitter.completeWithError(ex);
-            }
-        }).start();
-        return emitter;
-    }
-
-
 }

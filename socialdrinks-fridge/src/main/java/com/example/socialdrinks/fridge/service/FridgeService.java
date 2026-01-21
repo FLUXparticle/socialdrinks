@@ -1,6 +1,8 @@
 package com.example.socialdrinks.fridge.service;
 
+import com.example.socialdrinks.fridge.entity.*;
 import com.example.socialdrinks.fridge.model.*;
+import com.example.socialdrinks.fridge.repository.*;
 import com.example.socialdrinks.model.entity.*;
 import org.slf4j.*;
 import org.springframework.beans.factory.annotation.*;
@@ -17,12 +19,12 @@ public class FridgeService {
     private static final Logger LOGGER = LoggerFactory.getLogger(FridgeService.class);
 
     private final CocktailRemoteService cocktailService;
-
-    private final Map<String, Set<Long>> fridges = new HashMap<>();
+    private final FridgeItemRepository fridgeItemRepository;
 
     @Autowired
-    public FridgeService(CocktailRemoteService cocktailService) {
+    public FridgeService(CocktailRemoteService cocktailService, FridgeItemRepository fridgeItemRepository) {
         this.cocktailService = cocktailService;
+        this.fridgeItemRepository = fridgeItemRepository;
     }
 
     // Methode zum Abrufen aller Zutaten im Kühlschrank
@@ -40,11 +42,12 @@ public class FridgeService {
 
     // Methode zum Aktualisieren des Status einer Zutat im Kühlschrank
     public void updateIngredientStatus(Long ingredientId, boolean inFridge) {
-        Set<Long> fridge = getFridge();
+        String username = currentUsername();
         if (inFridge) {
-                fridge.add(ingredientId);
+            fridgeItemRepository.findByUsernameAndIngredientId(username, ingredientId)
+                    .orElseGet(() -> fridgeItemRepository.save(new FridgeItem(null, username, ingredientId)));
         } else {
-                fridge.remove(ingredientId);
+            fridgeItemRepository.deleteByUsernameAndIngredientId(username, ingredientId);
         }
     }
 
@@ -56,19 +59,11 @@ public class FridgeService {
                 : cocktailService.getPossibleCocktails(fridge);
     }
 
-    public List<String> mix(Long cocktailId) {
-        CocktailDetails details = cocktailService.getCocktailDetails(cocktailId);
-        List<String> steps = details.getInstructions().stream()
-                .map(Instruction::toString)
-                .collect(Collectors.toList());
-        steps.add("Schütteln...");
-        steps.add("Fertig!");
-        return steps;
-    }
-
     private Set<Long> getFridge() {
         String username = currentUsername();
-        return fridges.computeIfAbsent(username, k -> new HashSet<>());
+        return fridgeItemRepository.findByUsername(username).stream()
+                .map(FridgeItem::getIngredientId)
+                .collect(Collectors.toSet());
     }
 
     private String currentUsername() {
@@ -77,18 +72,5 @@ public class FridgeService {
         LOGGER.info("User '{}'", username);
         return username;
     }
-
-    public List<String> milkSummary() {
-        int sum = cocktailService.getAllCocktails().stream()
-                .filter(cocktail -> cocktail.getName().contains("Milk"))
-                .map(cocktail -> cocktailService.getCocktailDetails(cocktail.getId()))
-                .flatMap(details -> details.getInstructions().stream())
-                .filter(instruction -> instruction.getIngredient().getName().equals("Milch"))
-                .mapToInt(Instruction::getAmountCL)
-                .sum();
-        return List.of(String.valueOf(sum));
-    }
-
-    static final Map<String, Set<Long>> allFridges = new HashMap<>();
 
 }

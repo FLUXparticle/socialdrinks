@@ -7,25 +7,29 @@ Content-Type: application/json
 > {% client.global.set("auth_token", response.body.token); %}
 
 ### 2. Zutaten aus dem Kühlschrank abrufen
-GET http://localhost:8084/fridge/ingredients
+GET http://localhost:8084/api/fridge/ingredients
 Accept: application/json
-Authorization: Bearer {{auth_token}}
+X-User: manager
+X-Roles: SCOPE_USER
 
 ### 3. Zutat mit ID 7 als "im Kühlschrank" markieren
-PATCH http://localhost:8084/fridge/ingredients/7
+PATCH http://localhost:8084/api/fridge/ingredients/7
 Content-Type: application/json
-Authorization: Bearer {{auth_token}}
+X-User: manager
+X-Roles: SCOPE_USER
 
 { "inFridge": true }
 
 ### 4. Zutat mit ID 30 als "im Kühlschrank" markieren
-PATCH http://localhost:8084/fridge/ingredients/30
+PATCH http://localhost:8084/api/fridge/ingredients/30
 Content-Type: application/json
-Authorization: Bearer {{auth_token}}
+X-User: manager
+X-Roles: SCOPE_USER
 
 { "inFridge": true }
 
 ### 5. Verfügbare Rezepte oder Zutaten basierend auf dem Kühlschrankinhalt abrufen
-GET http://localhost:8084/fridge/possible
+GET http://localhost:8084/api/fridge/possible
 Accept: application/json
-Authorization: Bearer {{auth_token}}
+X-User: manager
+X-Roles: SCOPE_USER
