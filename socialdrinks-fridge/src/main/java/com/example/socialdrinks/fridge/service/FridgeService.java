@@ -4,6 +4,8 @@ import com.example.socialdrinks.fridge.model.*;
 import com.example.socialdrinks.model.entity.*;
 import org.slf4j.*;
 import org.springframework.beans.factory.annotation.*;
+import org.springframework.security.core.*;
+import org.springframework.security.core.context.*;
 import org.springframework.stereotype.*;
 
 import java.util.*;
@@ -70,7 +72,10 @@ public class FridgeService {
     }
 
     private String currentUsername() {
-        return "anonymous";
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication == null ? "anonymous" : authentication.getName();
+        LOGGER.info("User '{}'", username);
+        return username;
     }
 
     public List<String> milkSummary() {
