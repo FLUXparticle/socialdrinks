@@ -13,9 +13,11 @@ import static java.util.Collections.*;
 public class CocktailRestController {
 
     private final CocktailService cocktailService;
+    private final CartService cartService;
 
-    public CocktailRestController(CocktailService cocktailService) {
+    public CocktailRestController(CocktailService cocktailService, CartService cartService) {
         this.cocktailService = cocktailService;
+        this.cartService = cartService;
     }
 
     @GetMapping(path = "/cocktails")
@@ -64,6 +66,32 @@ public class CocktailRestController {
                 "name", ingredient.getName(),
                 "cocktails", cocktails
         );
+    }
+
+    @GetMapping("/cart")
+    public Map<String, Object> getCart() {
+        return Map.of(
+                "ingredients", cartService.getIngredients(),
+                "cocktails", cartService.getCocktailsForSelection()
+        );
+    }
+
+    @PostMapping("/cart/actions/add-cocktail")
+    public void addCocktailToCart(@RequestBody Map<String, Long> payload) {
+        Long cocktailId = payload.get("cocktailId");
+        if (cocktailId != null) {
+            cartService.addCocktail(cocktailId);
+        }
+    }
+
+    @DeleteMapping("/cart/items/{ingredientId}")
+    public void removeIngredientFromCart(@PathVariable Long ingredientId) {
+        cartService.removeIngredient(ingredientId);
+    }
+
+    @DeleteMapping("/cart")
+    public void clearCart() {
+        cartService.clear();
     }
 
 }

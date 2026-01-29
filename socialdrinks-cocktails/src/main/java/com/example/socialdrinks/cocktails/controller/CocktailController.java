@@ -12,9 +12,11 @@ import java.util.*;
 public class CocktailController {
 
     private final CocktailService cocktailService;
+    private final CartService cartService;
 
-    public CocktailController(CocktailService cocktailService) {
+    public CocktailController(CocktailService cocktailService, CartService cartService) {
         this.cocktailService = cocktailService;
+        this.cartService = cartService;
     }
 
     @GetMapping("/")
@@ -63,6 +65,31 @@ public class CocktailController {
         model.addAttribute("name", ingredient.getName());
         model.addAttribute("cocktails", cocktails);
         return "ingredient";
+    }
+
+    @GetMapping("/cart")
+    public String cart(Model model) {
+        model.addAttribute("ingredients", cartService.getIngredients());
+        model.addAttribute("cocktails", cartService.getCocktailsForSelection());
+        return "cart";
+    }
+
+    @PostMapping("/cart/actions/add-cocktail")
+    public String addCocktailToCart(@RequestParam Long cocktailId) {
+        cartService.addCocktail(cocktailId);
+        return "redirect:/cart";
+    }
+
+    @PostMapping("/cart/items/{ingredientId}/remove")
+    public String removeIngredientFromCart(@PathVariable Long ingredientId) {
+        cartService.removeIngredient(ingredientId);
+        return "redirect:/cart";
+    }
+
+    @PostMapping("/cart/clear")
+    public String clearCart() {
+        cartService.clear();
+        return "redirect:/cart";
     }
 
 }

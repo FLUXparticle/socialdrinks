@@ -26,7 +26,7 @@ public class GatewayConfig {
 
                 // Cocktail-REST-API
                 .route("cocktail-service", r -> r
-                        .path("/api/cocktails/**", "/api/ingredients/**")
+                        .path("/api/cocktails/**", "/api/ingredients/**", "/api/cart/**")
                         .uri("http://localhost:8082"))
 
                 .route("auth-service", r -> r
