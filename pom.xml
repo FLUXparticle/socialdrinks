@@ -27,6 +27,7 @@
         <module>socialdrinks-gateway</module>
         <module>socialdrinks-frontend</module>
         <module>socialdrinks-chat</module>
+        <module>socialdrinks-servlet</module>
     </modules>
 
     <properties>

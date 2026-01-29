@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Hallo, World!</title>
+</head>
+<body>
+
+<h1>Hallo, <span th:text="${name} ?: 'World'">World</span>!</h1>
+
+<form th:action="@{/hallo}" method="post">
+    <label for="name">Gib deinen Namen ein:</label>
+    <input type="text" id="name" name="name">
+    <button type="submit">Senden</button>
+</form>
+
+</body>
+</html>
