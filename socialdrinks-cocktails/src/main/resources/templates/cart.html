@@ -1,0 +1,38 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" lang="de">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Warenkorb</title>
+</head>
+
+<body>
+<h3><a th:href="@{/}">Cocktails App</a> &gt; Warenkorb</h3>
+
+<h3>Im Warenkorb</h3>
+<ul>
+    <li th:each="ingredient : ${ingredients}">
+        <form th:action="@{/cart/items/{id}/remove(id=${ingredient.id})}" method="post" style="display:inline;">
+            <button type="submit">-</button>
+        </form>
+        <a th:href="@{/ingredients/{id}(id=${ingredient.id})}" th:text="${ingredient.name}"></a>
+    </li>
+</ul>
+
+<form th:action="@{/cart/clear}" method="post">
+    <button type="submit">Warenkorb leeren</button>
+</form>
+
+<h3>Cocktails</h3>
+<ul>
+    <li th:each="cocktail : ${cocktails}">
+        <form th:action="@{/cart/actions/add-cocktail}" method="post" style="display:inline;">
+            <input type="hidden" name="cocktailId" th:value="${cocktail.id}" />
+            <button type="submit">+</button>
+        </form>
+        <a th:href="@{/cocktails/{id}(id=${cocktail.id})}" th:text="${cocktail.name}"></a>
+    </li>
+</ul>
+</body>
+
+</html>
