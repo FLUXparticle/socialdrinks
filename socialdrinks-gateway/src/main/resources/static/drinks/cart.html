@@ -1,0 +1,17 @@
+<h3>Im Warenkorb</h3>
+<ul>
+    <li ng-repeat="ingredient in ingredients">
+        <button ng-click="removeFromCart(ingredient.id)">-</button>
+        <a ng-href="#/ingredients/{{ingredient.id}}">{{ingredient.name}}</a>
+    </li>
+</ul>
+
+<button ng-click="clearCart()">Warenkorb leeren</button>
+
+<h3>Cocktails</h3>
+<ul>
+    <li ng-repeat="cocktail in cocktails">
+        <button ng-click="addCocktailToCart(cocktail.id)">+</button>
+        <a ng-href="#/cocktails/{{ cocktail.id }}">{{ cocktail.name }}</a>
+    </li>
+</ul>

@@ -33,6 +33,10 @@ app.config(function($routeProvider) {
             templateUrl: 'fridge.html',
             controller: 'FridgeController'
         })
+        .when('/user/cart', {
+            templateUrl: 'cart.html',
+            controller: 'CartController'
+        })
         .when('/user/possible', {
             templateUrl: 'possible.html',
             controller: 'PossibleController'
@@ -159,4 +163,49 @@ app.controller('PossibleController', function($scope, $http) {
         .catch(function(error) {
             console.error('Fehler beim Laden der möglichen Cocktails:', error);
         });
+});
+
+app.controller('CartController', function($scope, $http) {
+    $scope.loadCart = function() {
+        $http.get('/api/cart')
+            .then(function(response) {
+                $scope.ingredients = response.data.ingredients || [];
+                $scope.cocktails = response.data.cocktails || [];
+            })
+            .catch(function(error) {
+                console.error('Fehler beim Laden des Warenkorbs:', error);
+            });
+    };
+
+    $scope.removeFromCart = function(id) {
+        $http.delete('/api/cart/items/' + id)
+            .then(function() {
+                $scope.loadCart();
+            })
+            .catch(function(error) {
+                console.error('Fehler beim Entfernen der Zutat:', error);
+            });
+    };
+
+    $scope.addCocktailToCart = function(id) {
+        $http.post('/api/cart/actions/add-cocktail', { cocktailId: id })
+            .then(function() {
+                $scope.loadCart();
+            })
+            .catch(function(error) {
+                console.error('Fehler beim Hinzufügen des Cocktails:', error);
+            });
+    };
+
+    $scope.clearCart = function() {
+        $http.delete('/api/cart')
+            .then(function() {
+                $scope.loadCart();
+            })
+            .catch(function(error) {
+                console.error('Fehler beim Leeren des Warenkorbs:', error);
+            });
+    };
+
+    $scope.loadCart();
 });
