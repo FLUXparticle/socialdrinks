@@ -1,0 +1,11 @@
+<h3>Favoriten</h3>
+
+<ul>
+    <li ng-repeat="cocktail in cocktails">
+        <button ng-click="toggleFavorite(cocktail.id)">
+            {{ cocktail.favorite ? '-' : '+' }}
+        </button>
+        <a ng-href="#/cocktails/{{ cocktail.id }}">{{ cocktail.name }}</a>
+        <span> (Favoriten: {{ cocktail.favoriteCount }})</span>
+    </li>
+</ul>

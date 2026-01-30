@@ -25,6 +25,10 @@ app.config(function($routeProvider) {
             templateUrl: 'ingredient-detail.html',
             controller: 'IngredientDetailController'
         })
+        .when('/user/favorites', {
+            templateUrl: 'favorites.html',
+            controller: 'FavoritesController'
+        })
         .when('/search', {
             templateUrl: 'search.html',
             controller: 'SearchController'
@@ -208,4 +212,28 @@ app.controller('CartController', function($scope, $http) {
     };
 
     $scope.loadCart();
+});
+
+app.controller('FavoritesController', function($scope, $http) {
+    $scope.loadFavorites = function() {
+        $http.get('/api/favorites')
+            .then(function(response) {
+                $scope.cocktails = response.data;
+            })
+            .catch(function(error) {
+                console.error('Fehler beim Laden der Favoriten:', error);
+            });
+    };
+
+    $scope.toggleFavorite = function(id) {
+        $http.post('/api/favorites/toggle', { cocktailId: id })
+            .then(function() {
+                $scope.loadFavorites();
+            })
+            .catch(function(error) {
+                console.error('Fehler beim Aktualisieren des Favoriten:', error);
+            });
+    };
+
+    $scope.loadFavorites();
 });
