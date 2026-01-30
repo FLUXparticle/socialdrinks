@@ -2,6 +2,7 @@ package com.example.socialdrinks.cocktails.controller;
 
 import com.example.socialdrinks.cocktails.service.*;
 import com.example.socialdrinks.model.entity.*;
+import jakarta.servlet.http.*;
 import org.springframework.stereotype.*;
 import org.springframework.ui.*;
 import org.springframework.web.bind.annotation.*;
@@ -13,10 +14,12 @@ public class CocktailController {
 
     private final CocktailService cocktailService;
     private final CartService cartService;
+    private final FavoriteService favoriteService;
 
-    public CocktailController(CocktailService cocktailService, CartService cartService) {
+    public CocktailController(CocktailService cocktailService, CartService cartService, FavoriteService favoriteService) {
         this.cocktailService = cocktailService;
         this.cartService = cartService;
+        this.favoriteService = favoriteService;
     }
 
     @GetMapping("/")
@@ -90,6 +93,20 @@ public class CocktailController {
     public String clearCart() {
         cartService.clear();
         return "redirect:/cart";
+    }
+
+    @GetMapping("/favorites")
+    public String favorites(HttpServletRequest request, Model model) {
+        String username = request.getHeader("X-User");
+        model.addAttribute("cocktails", favoriteService.getFavoritesOverview(username));
+        return "favorites";
+    }
+
+    @PostMapping("/favorites/toggle")
+    public String toggleFavorite(HttpServletRequest request, @RequestParam Long cocktailId) {
+        String username = request.getHeader("X-User");
+        favoriteService.toggleFavorite(username, cocktailId);
+        return "redirect:/favorites";
     }
 
 }

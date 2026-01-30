@@ -1,5 +1,6 @@
 package com.example.socialdrinks.cocktails.controller;
 
+import com.example.socialdrinks.cocktails.model.*;
 import com.example.socialdrinks.cocktails.service.*;
 import com.example.socialdrinks.model.entity.*;
 import org.springframework.web.bind.annotation.*;
@@ -14,10 +15,12 @@ public class CocktailRestController {
 
     private final CocktailService cocktailService;
     private final CartService cartService;
+    private final FavoriteService favoriteService;
 
-    public CocktailRestController(CocktailService cocktailService, CartService cartService) {
+    public CocktailRestController(CocktailService cocktailService, CartService cartService, FavoriteService favoriteService) {
         this.cocktailService = cocktailService;
         this.cartService = cartService;
+        this.favoriteService = favoriteService;
     }
 
     @GetMapping(path = "/cocktails")
@@ -92,6 +95,25 @@ public class CocktailRestController {
     @DeleteMapping("/cart")
     public void clearCart() {
         cartService.clear();
+    }
+
+    @GetMapping("/favorites")
+    public Collection<FavoriteCocktailDTO> getFavoritesOverview(
+            @RequestHeader(value = "X-User", required = false) String username
+    ) throws InterruptedException {
+        Thread.sleep(1000);
+        return favoriteService.getFavoritesOverview(username);
+    }
+
+    @PostMapping("/favorites/toggle")
+    public Map<String, Object> toggleFavorite(
+            @RequestHeader(value = "X-User", required = false) String username,
+            @RequestBody Map<String, Long> payload
+    ) throws InterruptedException {
+        Thread.sleep(1000);
+        Long cocktailId = payload.get("cocktailId");
+        boolean favorite = cocktailId != null && favoriteService.toggleFavorite(username, cocktailId);
+        return Map.of("favorite", favorite);
     }
 
 }
